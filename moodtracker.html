@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Mood Tracker</title>
+    <style>
+        :root {
+            --happy-color: #f9d371;
+            --sad-color: #74b9ff;
+            --excited-color: #ff7675;
+            --calm-color: #55efc4;
+            --bg-light: #f8f9fa;
+            --bg-dark: #2d3436;
+            --text-light: #dfe6e9;
+            --text-dark: #2c3e50;
+            --card-bg: #ffffff;
+            --card-shadow: rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            transition: background-color 0.4s ease, color 0.4s ease;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .title {
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-align: center;
+            color: var(--text-dark);
+        }
+
+        .mood-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 20px;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .mood-button {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 25px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            background-color: var(--card-bg);
+            box-shadow: 0 4px 6px var(--card-shadow);
+        }
+
+        .mood-button:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .mood-button span {
+            font-size: 3rem;
+        }
+
+        .mood-button p {
+            margin-top: 10px;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        .history {
+            margin-top: 40px;
+            text-align: center;
+        }
+
+        .history h2 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .history-list {
+            list-style-type: none;
+            padding: 0;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .history-item {
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 10px;
+            background-color: var(--card-bg);
+            box-shadow: 0 4px 6px var(--card-shadow);
+            text-align: center;
+        }
+
+        .toggle-theme {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            background-color: var(--text-dark);
+            color: var(--text-light);
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: background-color 0.4s ease, color 0.4s ease;
+        }
+
+        .toggle-theme:hover {
+            background-color: var(--text-light);
+            color: var(--text-dark);
+        }
+
+        @media (max-width: 600px) {
+            .title {
+                font-size: 1.8rem;
+            }
+
+            .mood-button {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="toggle-theme">Dark Mode</button>
+    <div class="container">
+        <h1 class="title">How Are You Feeling Today?</h1>
+        <div class="mood-selector">
+            <div class="mood-button" data-mood="happy" style="--mood-color: var(--happy-color);">
+                <span>😊</span>
+                <p>Happy</p>
+            </div>
+            <div class="mood-button" data-mood="sad" style="--mood-color: var(--sad-color);">
+                <span>😢</span>
+                <p>Sad</p>
+            </div>
+            <div class="mood-button" data-mood="excited" style="--mood-color: var(--excited-color);">
+                <span>😃</span>
+                <p>Excited</p>
+            </div>
+            <div class="mood-button" data-mood="calm" style="--mood-color: var(--calm-color);">
+                <span>😌</span>
+                <p>Calm</p>
+            </div>
+        </div>
+        <div class="history">
+            <h2>Previous Moods</h2>
+            <ul class="history-list"></ul>
+        </div>
+    </div>
+
+    <script>
+        const moodButtons = document.querySelectorAll('.mood-button');
+        const body = document.body;
+        const historyList = document.querySelector('.history-list');
+        const toggleThemeButton = document.querySelector('.toggle-theme');
+
+        moodButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const mood = button.getAttribute('data-mood');
+                const moodColor = getComputedStyle(button).getPropertyValue('--mood-color');
+
+                body.style.backgroundColor = moodColor;
+                addMoodToHistory(mood);
+            });
+        });
+
+        function addMoodToHistory(mood) {
+            const moodItem = document.createElement('li');
+            moodItem.classList.add('history-item');
+            const date = new Date().toLocaleString();
+            moodItem.textContent = `${mood.charAt(0).toUpperCase() + mood.slice(1)} - ${date}`;
+            historyList.appendChild(moodItem);
+        }
+
+        toggleThemeButton.addEventListener('click', () => {
+            const isDark = body.style.backgroundColor === 'rgb(45, 52, 54)';
+
+            body.style.backgroundColor = isDark ? 'var(--bg-light)' : 'var(--bg-dark)';
+            body.style.color = isDark ? 'var(--text-dark)' : 'var(--text-light)';
+        });
+    </script>
+</body>
+</html>
